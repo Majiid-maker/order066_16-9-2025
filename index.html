@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
     <link rel="icon" href="gambar/logo.png" sizes="192x192">
     <link rel="apple-touch-icon" href="gambar/logo.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -174,6 +173,40 @@
             margin: 15px 0;
         }
         
+        /* Music control */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .music-control:hover {
+            opacity: 1;
+        }
+        
+        .music-control.muted::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 50px;
+            background: white;
+            transform: rotate(45deg) translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+        }
+        
         @media (min-width: 768px) {
             .card-back {
                 flex-direction: row;
@@ -213,7 +246,7 @@
     <div class="card-container" id="cardContainer">
         <!-- Sampul Depan -->
         <div class="card card-front">
-            <h1>HAPPY BIRTHDAY</h1>
+            <h1>CONGRATULATIONS </h1>
             <div class="ornament-front"></div>
             <p>Click to open</p>
         </div>
@@ -223,8 +256,8 @@
             <div class="ornament"></div>
             <div class="card-left">
                 <div>
-                    <div class="occasion">Happy Birthday</div>
-                    <h1>Dear Eleazar Brian</h1>
+                    <div class="occasion">Congratulations</div>
+                    <h1>Pdp. Eleazar Brian</h1>
                 </div>
                 <div>
                     <div class="divider"></div>
@@ -233,12 +266,10 @@
             </div>
             <div class="card-right">
                 <div class="greeting">
-                    Wishing you a day filled with happiness and a year filled with joy.
+                    May God bless your ministry and you'll be the Light for His Glory
                 </div>
                 <div class="message">
-                    May this special day bring you endless smiles and wonderful memories. 
-                    You deserve all the best that life has to offer. 
-                    Celebrate this beautiful day to the fullest!
+                    1 corinthians 15:58 
                 </div>
                 <div class="signature">
                     With love,<br>
@@ -247,12 +278,54 @@
             </div>
         </div>
     </div>
+    
+    <!-- Music control button -->
+    <div class="music-control" id="musicControl">♪</div>
+    
+    <!-- Audio element (gunakan lagu yang sesuai) -->
+    <audio id="backgroundMusic" loop>
+        <!-- Ganti dengan URL lagu yang ingin Anda gunakan -->
+        <source src="bv.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
 
     <script>
         const cardContainer = document.getElementById('cardContainer');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        const musicControl = document.getElementById('musicControl');
+        let hasPlayed = false;
+        
         cardContainer.addEventListener('click', function() {
             this.classList.toggle('flipped');
+            
+            // Memutar musik hanya pada kali pertama kartu dibuka
+            if (!hasPlayed) {
+                backgroundMusic.play()
+                    .then(() => {
+                        hasPlayed = true;
+                        musicControl.style.display = 'flex';
+                    })
+                    .catch(error => {
+                        console.log('Autoplay prevented:', error);
+                    });
+            }
         });
+        
+        // Kontrol musik
+        musicControl.addEventListener('click', function(e) {
+            e.stopPropagation(); // Mencegah event bubbling ke cardContainer
+            
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                this.classList.remove('muted');
+            } else {
+                backgroundMusic.pause();
+                this.classList.add('muted');
+            }
+        });
+        
+        // Sembunyikan kontrol musik awalnya
+        musicControl.style.display = 'none';
         
         // Prevent scrolling on mobile devices
         document.addEventListener('touchmove', function(e) {
